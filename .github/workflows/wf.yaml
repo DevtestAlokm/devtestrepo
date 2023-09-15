@@ -11,7 +11,7 @@ jobs:
     run-another-powershell:
         runs-on: windows-latest
         steps:
-            - name: ps-command_v2
-              run: get-childitem
+            - name: generate-failure
+              run: get-childitemm
             - name: ps-command_v2_v1
               run: get-physicaldisk
