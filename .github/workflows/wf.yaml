@@ -1,5 +1,5 @@
 name: firstworkflow
-on: [push]
+on: [schedule]
 jobs:
     run-powershell-command:
         runs-on: windows-latest
