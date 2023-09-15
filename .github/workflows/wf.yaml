@@ -1,0 +1,11 @@
+name: firstworkflow
+on: [push]
+jobs:
+    run-powershell-command:
+        runs-on: windows-latest
+        steps: 
+            - name: ps command
+              run: get-service | select -first 10
+            - name: ps command 2
+              run: get-process | select -first 10
+              
