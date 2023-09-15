@@ -1,18 +1,23 @@
 name: firstworkflow
-on: [schedule]
+on: [push]
 jobs:
-    run-powershell-command:
-        runs-on: windows-latest
-        steps: 
-            - name: ps command
-              run: get-service | select -first 10
-            - name: ps command 2
-              run: get-process | select -first 10
-    run-another-powershell:
-        runs-on: windows-latest
-        
+    display-wd-info_Ubuntu:
+        runs-on: ubuntu-latest
         steps:
-            - name: generate-failure
-              run: get-childitem
-            - name: ps-command_v2_v1
-              run: get-physicaldisk
+            - name: display directory
+              run: |
+                pwd
+                ls -a
+                echo $GITHUB_SHA
+                echo $GITHUB_REPOSITORY
+                echo $GITHUB_WORKSPACE
+    display-wd-info_Windowsd:
+        runs-on: windows-latest
+        steps:
+            - name: display directory
+              run: |
+                pwd
+                ls -a
+                echo $GITHUB_SHA
+                echo $GITHUB_REPOSITORY
+                echo $GITHUB_WORKSPACE
