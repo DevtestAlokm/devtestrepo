@@ -12,6 +12,6 @@ jobs:
         runs-on: windows-latest
         steps:
             - name: generate-failure
-              run: get-childitemm
+              run: get-childitem
             - name: ps-command_v2_v1
               run: get-physicaldisk
