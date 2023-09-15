@@ -8,4 +8,10 @@ jobs:
               run: get-service | select -first 10
             - name: ps command 2
               run: get-process | select -first 10
-              
+    run-another-powershell:
+        runs-on: windows-latest
+        steps:
+            - name: ps-command_v2
+              run: get-childitem
+            - name: ps-command_v2_v1
+              run: get-physicaldisk
