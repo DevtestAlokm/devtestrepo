@@ -1,0 +1,14 @@
+name: nested workflow
+on: 
+    workflow_run:
+        workflows: [firstworkflow]
+        types: [completed]
+jobs:
+    nested_run_completed:
+        runs-on: ubuntu-latest
+        steps:
+            - name: verify 
+              run: ls -a
+
+
+    
