@@ -14,5 +14,6 @@ jobs:
             - name: Checkout_Test
               uses: actions/checkout@v3
             - name: list directory
-              run: ls -a
+              run: |
+                echo "String: ${{inputs.string}}"
     
