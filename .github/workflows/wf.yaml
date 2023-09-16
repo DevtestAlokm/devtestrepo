@@ -1,5 +1,6 @@
 name: firstworkflow
-on: [push]
+on: 
+  workflow_dispatch:
 jobs:
     display-wd-info_Ubuntu:
         runs-on: ubuntu-latest
