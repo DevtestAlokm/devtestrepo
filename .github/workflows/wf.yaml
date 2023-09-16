@@ -4,20 +4,8 @@ jobs:
     display-wd-info_Ubuntu:
         runs-on: ubuntu-latest
         steps:
-            - name: display directory
-              run: |
-                pwd
-                ls -a
-                echo $GITHUB_SHA
-                echo $GITHUB_REPOSITORY
-                echo $GITHUB_WORKSPACE
-    display-wd-info_Windowsd:
-        runs-on: windows-latest
-        steps:
-            - name: display directory
-              run: |
-                pwd
-                ls -a
-                echo $GITHUB_SHA
-                echo $GITHUB_REPOSITORY
-                echo $GITHUB_WORKSPACE
+            - name: Checkout_Test
+              uses: actions/checkout@v3
+            - name: list directory
+              run: ls -a
+    
