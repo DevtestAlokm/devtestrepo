@@ -1,6 +1,12 @@
 name: firstworkflow
 on: 
   workflow_dispatch:
+    inputs:
+      string:
+        type: string
+        default: none
+        description: please provide an input
+        required: true
 jobs:
     display-wd-info_Ubuntu:
         runs-on: ubuntu-latest
