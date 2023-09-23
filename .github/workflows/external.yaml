@@ -1,0 +1,8 @@
+name: external_event_workflow
+on: 
+    repository_dispatch: 
+jobs:
+    external_Event:
+        runs-on: ubuntu-latest
+        steps: 
+            - run: echo "repository Dispatch event triggered"
