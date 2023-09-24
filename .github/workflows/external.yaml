@@ -5,4 +5,4 @@ jobs:
     external_Event:
         runs-on: ubuntu-latest
         steps: 
-            - run: echo "repository Dispatch event triggered"
+            - run: echo ${{github.event.client_payload}}
