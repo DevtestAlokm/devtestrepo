@@ -5,4 +5,4 @@ jobs:
     external_Event:
         runs-on: ubuntu-latest
         steps: 
-            - run: echo ${{github.event.client_payload}}
+            - run: echo ${{github.event.client_payload.env}}
