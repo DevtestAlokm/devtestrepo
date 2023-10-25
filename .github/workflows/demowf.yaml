@@ -1,5 +1,9 @@
 
 name: 'terraform-Azure'
+permissions: 
+  id-token: write
+  contents: read
+  deployments: write
 
 on:
   push:
