@@ -1,10 +1,14 @@
 name: login test
 on: [push]
+# defaults:
+#   run:
+#     working-directory: ./lz01
 permissions: 
   id-token: write
   contents: read
   deployments: write
 jobs:
+  
   configure-env01:
     runs-on: ubuntu-latest
     steps:
@@ -14,4 +18,11 @@ jobs:
           client-id: ${{secrets.AZURE_CLIENT_ID}}
           tenant-id: ${{secrets.AZURE_TENANT_ID}} 
           subscription-id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup terraform
+        uses: hashicorp/setup-terraform
+      - name: 
+        run: terraform init
+        working-directory: ./lz01
           
