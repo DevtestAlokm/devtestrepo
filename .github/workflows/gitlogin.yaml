@@ -25,6 +25,9 @@ jobs:
       - name: az sp login
         run: 
           az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_SECRET}} --tenant ${{secrets.AZURE_TENANT_ID}} 
+      - name: environment export
+        run: |
+          export ARM_ACCESS_KEY=${{secrets.AZURE_STORAGE_KEY}} 
       - name: terraform
         run: terraform init
         working-directory: ./lz01
