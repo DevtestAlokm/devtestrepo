@@ -30,6 +30,9 @@ jobs:
         working-directory: ./lz01
       - name: worker directory structure
         run: tree
+      - name: terraform
+        run: terraform plan
+        working-directory: ./lz01
 
           
 
