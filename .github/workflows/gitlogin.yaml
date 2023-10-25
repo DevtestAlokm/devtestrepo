@@ -29,7 +29,6 @@ jobs:
         run: terraform init
       - name: worker directory structure
         run: tree
-        
-#        working-directory: ./lz01
+        working-directory: ./lz01
           
 
