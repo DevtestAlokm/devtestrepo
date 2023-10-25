@@ -22,9 +22,10 @@ jobs:
         uses: actions/checkout@v3
       - name: setup terraform
         uses: hashicorp/setup-terraform@v2
-      - name: 
+      - name: az sp login
         run: 
           az login --service-principal -u ${{secrets.AZURE_CLIENT_ID}} -p ${{secrets.AZURE_CLIENT_SECRET}} --tenant ${{secrets.AZURE_TENANT_ID}} 
-          terraform init
+      - name: terraform
+        run: terraform init
         working-directory: ./lz01
           
