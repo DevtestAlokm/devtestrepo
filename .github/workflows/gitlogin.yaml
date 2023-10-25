@@ -1,5 +1,5 @@
 name: login test
-on: [push}
+on: [push]
 permissions: 
   id-token: write
   contents: read
