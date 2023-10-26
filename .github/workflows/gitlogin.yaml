@@ -1,57 +1,160 @@
-name: Terraform_Init_And_Plan
-on: [push]
-# defaults:
-#   run:
-#     working-directory: ./lz01
 
-permissions: 
-  id-token: write
-  contents: read
-  deployments: write
+name: 'terraform-Azure'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "/actions/terraform-azure/*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: #this attribute will enable the manual run to the pipeline
+  
+
+# Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+defaults:
+  run:
+    shell: bash
+env: 
+  ROOT_PATH: '${{github.workspace}}/lz01'
+  ARM_CLIENT_ID: ${{secrets.AZURE_CLIENT_ID}}
+  ARM_CLIENT_SECRET: ${{secrets.AZURE_CLIENT_SECRET}}
+  ARM_SUBSCRIPTION_ID: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+  ARM_TENANT_ID: ${{secrets.AZURE_TENANT_ID}}
+  STAGE_NAME: production
 
 jobs:
-  
-  configure-env01:
+  terraform_plan:
+    name: 'terraform plan'
     runs-on: ubuntu-latest
+    
     steps:
-      - name: test login
-        uses: azure/login@v1
-        with: 
-          client-id: ${{secrets.AZURE_CLIENT_ID}}
-          tenant-id: ${{secrets.AZURE_TENANT_ID}} 
-          subscription-id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
-    # Run az commands to confirm sub access
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      - name: 'Run az commands'
-        run: |
-          az account show
-      - name: checkout repository
-        uses: actions/checkout@v3
-      - name: setup terraform
-        uses: hashicorp/setup-terraform@v2
-      - name: terraform-init
-        working-directory: ./lz01
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+  
+    - name: terraform init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH }}
+
+    - name: terraform Plan
+      run: terraform plan 
+      working-directory: ${{ env.ROOT_PATH }}
+      
+
+  terraform_apply:
+    name: 'terraform apply'
+    needs: [terraform_plan]
+    runs-on: ubuntu-latest
+    environment: production
+    
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+ 
+    - name: terraform Init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH }}
+
+    - name: terraform Init
+      run: echo 'var -> ${{inputs.tf_destroy}}'
+      working-directory: ${{ env.ROOT_PATH }}
+
+      #github.ref == 'refs/heads/main' && github.event_name == 'push'
+    - name: terraform Apply
+      run: terraform apply -auto-approve
+      if: ${{inputs.tf_destroy}} == false
+      working-directory: ${{ env.ROOT_PATH }}
+
+    # - name: terraform destroy
+    #   run: terraform destroy -auto-approve
+    #   if: ${{inputs.tf_destroy}} == true
+    #   working-directory: ${{ env.ROOT_PATH }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# name: Terraform_Init_And_Plan
+# on: [push]
+# # defaults:
+# #   run:
+# #     working-directory: ./lz01
+
+# permissions: 
+#   id-token: write
+#   contents: read
+#   deployments: write
+
+# jobs:
+  
+#   configure-env01:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: test login
+#         uses: azure/login@v1
+#         with: 
+#           client-id: ${{secrets.AZURE_CLIENT_ID}}
+#           tenant-id: ${{secrets.AZURE_TENANT_ID}} 
+#           subscription-id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+#     # Run az commands to confirm sub access
+
+#       - name: 'Run az commands'
+#         run: |
+#           az account show
+#       - name: checkout repository
+#         uses: actions/checkout@v3
+#       - name: setup terraform
+#         uses: hashicorp/setup-terraform@v2
+#       - name: terraform-init
+#         working-directory: ./lz01
         
-        env:
-          STORAGE_ACCOUNT : ${{secrets.STORAGE_ACCOUNT}}
-          CONTAINER_NAME: ${{secrets.CONTAINER_NAME}}
-          RESOURCE_GROUP_NAME: ${{secrets.STORAGE_RESOURCE_GROUP_NAME}}
-          ARM_CLIENT_ID: ${{secrets.AZURE_CLIENT_ID}}
-          ARM_SUBSCRIPTION_ID: ${{secrets.AZURE_SUBSCRIPTION_ID}}
-          ARM_TENANT_ID: ${{secrets.AZURE_TENANT_ID}}
-#          ARM_SAS_TOKEN: ${{}} 
-        run: terraform init -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME" -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
-      - name: Terraform plan
-        id: plan
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: terraform plan -no-color
-        working-directory: ./lz01
-      - name: CheckOV-Scan
-        uses: bridgecrewio/checkov-action@master
-        with: 
-          directory: .      
+#         env:
+#           STORAGE_ACCOUNT : ${{secrets.STORAGE_ACCOUNT}}
+#           CONTAINER_NAME: ${{secrets.CONTAINER_NAME}}
+#           RESOURCE_GROUP_NAME: ${{secrets.STORAGE_RESOURCE_GROUP_NAME}}
+#           ARM_CLIENT_ID: ${{secrets.AZURE_CLIENT_ID}}
+#           ARM_SUBSCRIPTION_ID: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+#           ARM_TENANT_ID: ${{secrets.AZURE_TENANT_ID}}
+# #          ARM_SAS_TOKEN: ${{}} 
+#         run: terraform init -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME" -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
+#       - name: Terraform plan
+#         id: plan
+#         env:
+#           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+#           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+#         run: terraform plan -no-color
+#         working-directory: ./lz01
+#       - name: CheckOV-Scan
+#         uses: bridgecrewio/checkov-action@master
+#         with: 
+#           directory: .      
 
 
