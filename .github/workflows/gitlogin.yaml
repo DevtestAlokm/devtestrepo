@@ -23,28 +23,28 @@ jobs:
     # Run az commands to confirm sub access
 
       - name: 'Run az commands'
-        run: |
-          az account show
-      - name: checkout
+        run: echo ARM_ACCESS_KEY=$(az storage account show --name ${{secrets.STORAGE_ACCOUNT}} --query key.value -o tsv) >> $GITHUB_ENV
+      - name: checkout repository
         uses: actions/checkout@v3
       - name: setup terraform
         uses: hashicorp/setup-terraform@v2
-      - name: terraform
+      - name: terraform-init
         working-directory: ./lz01
-
+        
         env:
           STORAGE_ACCOUNT : ${{secrets.STORAGE_ACCOUNT}}
           CONTAINER_NAME: ${{secrets.CONTAINER_NAME}}
           RESOURCE_GROUP_NAME: ${{secrets.STORAGE_RESOURCE_GROUP_NAME}}
-          ARM_CLIENT_ID: ${{secrets.AZURE_CLIENT_ID}}
+#          ARM_CLIENT_ID: ${{secrets.AZURE_CLIENT_ID}}
           ARM_SUBSCRIPTION_ID: ${{secrets.AZURE_SUBSCRIPTION_ID}}
-          ARM_TENANT_ID: ${{secrets.AZURE_TENANT_ID}}
+ #         ARM_TENANT_ID: ${{secrets.AZURE_TENANT_ID}}
+          #ARM_ACCESS_KEY : ${{}} 
         run: terraform init -backend-config="storage_account_name=$STORAGE_ACCOUNT" -backend-config="container_name=$CONTAINER_NAME" -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
       - name: Terraform plan
         id: plan
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SANDBOX_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: terraform plan -no-color
         working-directory: ./lz01
