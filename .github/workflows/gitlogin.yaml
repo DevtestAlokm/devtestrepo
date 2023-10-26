@@ -49,6 +49,9 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: terraform plan -no-color
         working-directory: ./lz01
-            
+      - name: CheckOV-Scan
+        uses: bridgecrewio/checkov-action@master
+        with: 
+          directory: .      
 
 
